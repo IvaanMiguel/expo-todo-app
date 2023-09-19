@@ -20,7 +20,7 @@ const MyTheme = {
 
 const headerOptions = {
   headerStyle: {
-    backgroundColor: 'indigo.700'
+    backgroundColor: '#4f46e5'
   },
   headerTintColor: 'white'
 }
