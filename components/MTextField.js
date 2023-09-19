@@ -1,5 +1,4 @@
 import {
-  Box,
   FormControl,
   Image,
   Input,
@@ -51,6 +50,10 @@ function MTextField ({
                 <Image
                   source={ srcIcon }
                   alt='Input icon'
+                  _web={{
+                    width: '32px',
+                    height: '32px'
+                  }}
                 />
               </InputRightAddon>
             ) : null
@@ -58,18 +61,14 @@ function MTextField ({
         </InputGroup>
         {
           errorMessage ? (
-            <FormControl.ErrorMessage leftIcon={ <WarningOutlineIcon size='xs' /> }>
-              <Text bold>
+            <FormControl.ErrorMessage leftIcon={ <WarningOutlineIcon size='xs' /> }npx >
               { errorMessage }
-              </Text>
             </FormControl.ErrorMessage>
           ) : null
         }
         {
           helpText && !error ? (
-            <FormControl.HelperText>
-              { helpText }
-            </FormControl.HelperText>
+            <FormControl.HelperText>{ helpText }</FormControl.HelperText>
           ) : null
         }
       </VStack>
