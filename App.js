@@ -9,6 +9,7 @@ import Login from './components/auth/Login';
 import SignUp from './components/auth/SignUp';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ChangePassword from './components/auth/ChangePassword';
+import TodoList from './components/app/TodoList';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -59,6 +60,15 @@ export default function App() {
             options={{
               ...headerOptions,
               title: 'Change your password'
+            }}
+          />
+          <Stack.Screen
+            name='TodoList'
+            component={ TodoList }
+            options={{
+              ...headerOptions,
+              headerBackVisible: false,
+              title: 'TODO app'
             }}
           />
         </Stack.Navigator>
