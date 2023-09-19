@@ -42,6 +42,7 @@ const Login = ({ navigation }) => {
             size='lg'
             minW='140'
             colorScheme='indigo'
+            onPress={ () => navigation.navigate('TodoList') }
           >
             Login
           </Button>
