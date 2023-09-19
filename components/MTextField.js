@@ -11,7 +11,8 @@ import {
 import { useState } from 'react'
 
 function MTextField ({
-  label = 'Label',
+  isReadOnly = false,
+  label,
   type = 'text',
   srcIcon,
   validation,
@@ -32,11 +33,21 @@ function MTextField ({
   }
 
   return (
-    <FormControl isRequired isInvalid={ error }>
+    <FormControl
+      isReadOnly = { isReadOnly }
+      isDisabled = { isReadOnly }
+      isRequired
+      isInvalid={ error }
+      flex='1'
+    >
       <VStack>
-        <FormControl.Label>
-          <Text fontSize='16'>{ label }</Text>
-        </FormControl.Label>
+        {
+          label ? (
+            <FormControl.Label>
+              <Text fontSize='16'>{ label }</Text>
+            </FormControl.Label>
+          ) : null
+        }
         <InputGroup>
           <Input
             type={ type }
