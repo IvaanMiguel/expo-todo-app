@@ -1,10 +1,7 @@
 import {
   Box,
   Button,
-  Heading,
-  Link,
   ScrollView,
-  Text,
   VStack
 } from 'native-base'
 import Layout from './Layout'
@@ -29,19 +26,15 @@ const Login = ({ navigation }) => {
                 type='password'
                 srcIcon={ require('../../assets/password-icon.png') }
               />
-              <Link
+              <Button
                 mt='1' ml='auto'
                 px='2' py='1'
+                variant='ghost'
+                colorScheme='indigo'
                 onPress={ () => navigation.navigate('ForgotPassword') }
               >
-                <Text
-                  color='indigo.700'
-                  fontSize='md'
-                  bold
-                >
-                  Forgot password?
-                </Text>
-              </Link>
+                Forgot password?
+              </Button>
             </Box>
           </VStack>
           <Button
