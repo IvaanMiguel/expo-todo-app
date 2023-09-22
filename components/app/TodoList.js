@@ -2,27 +2,69 @@ import {
   Box,
   FlatList,
   HStack,
+  Heading,
   IconButton,
+  Input,
   VStack
 } from 'native-base'
-import MTextField from '../MTextField'
 import TaskItem from './TaskItem'
 import { useState } from 'react'
 import EditTaskModal from './EditTaskModal'
 import { MaterialIcons } from '@expo/vector-icons'; 
 
-const createTaskItem = (index, onPress) => {
+const createTaskItem = (index, task, onPress, onDelete, onCompleted) => {
   return (
     <TaskItem
-      description={ `Tarea ${index + 1}` }
+      index={ index }
+      task={ task }
       showModal={ onPress }
+      onDelete={ onDelete }
+      onCompleted = { onCompleted }
     />
   )
 }
 
+const renderListSpacer = () => <Box height='16px' />
+const renderEmptyList = () => (
+  <Heading
+    size='sm'
+    textAlign='center'
+    color='muted.400'
+  >
+    No hay tareas pendientes.
+  </Heading>
+)
+
 const TodoList = () => {
-  const data = new Array(20).fill(0)
+  const [tasks, setTasks] = useState([])
+  const [completedTasks, setCompletedTasks] = useState([])
   const [showEditModal, setShowEditModal] = useState(false)
+  const [title, setTitle] = useState('')
+
+  const addTask = (title) => {
+    if (!title) return
+
+    setTasks([...tasks, {
+      title: title,
+      description: '',
+      isCompleted: false
+    }])
+
+    setTitle('')
+  }
+
+  const deleteTask = index => {
+    const _tasks = [...tasks]
+    _tasks.splice(index, 1)
+    setTasks(_tasks)
+  }
+
+  const completeTask = index => {
+    setCompletedTasks([...completedTasks, tasks[index]])
+    deleteTask(index)
+
+    console.log(completedTasks);
+  }
 
   return (
     <>
@@ -32,19 +74,29 @@ const TodoList = () => {
           space='2'
           alignItems='center'
         >
-          <MTextField />
+          <Input
+            flex='1'
+            fontSize='16'
+            value={ title }
+            onChangeText={ text => setTitle(text) }
+          />
           <IconButton
             icon={ <MaterialIcons name='add' size={24} color='white' /> }
             variant='solid'
             colorScheme='indigo'
+            onPress={ () => addTask(title) }
           />
         </HStack>
         <FlatList
           px='4'
-          data={ data }
-          renderItem={ ({ index }) => createTaskItem(index, setShowEditModal) }
-          ItemSeparatorComponent={ () => <Box height='16px' /> }
-          ListFooterComponent={ () => <Box height='16px' /> }
+          data={ tasks }
+          renderItem={ ({ index, item }) => {
+            if (!item.isCompleted) return createTaskItem(index, item, setShowEditModal, deleteTask, completeTask)
+          }}
+          keyExtractor={ (item, index) => index.toString() }
+          ItemSeparatorComponent={ () => renderListSpacer() }
+          ListFooterComponent={ () => renderListSpacer() }
+          ListEmptyComponent={ () => renderEmptyList() }
         />
       </VStack>
       <EditTaskModal isOpen={ showEditModal } showModal={ setShowEditModal } />
