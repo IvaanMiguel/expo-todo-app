@@ -1,12 +1,18 @@
 import {
-  Button,
+  Box,
   Checkbox,
   HStack,
   IconButton,
   MinusIcon,
+  Pressable,
+  Text,
+  useToast,
 } from 'native-base'
 
-const TaskItem = ({ description, showModal }) => {
+const TaskItem = props => {
+  const taskCompletedToast = useToast()
+  const taskDeletedToast = useToast()
+
   return (
     <HStack
       space='2'
@@ -14,27 +20,54 @@ const TaskItem = ({ description, showModal }) => {
     >
       <Checkbox
         size='md'
-        aria-label='Complete task'
         colorScheme='success'
-      />
-      <Button
-        flex='1'
-        justifyContent='flex-start'
-        size='lg'
-        variant='ghost'
-        colorScheme='indigo'
-        _text={{
-          color: 'black',
-          isTruncated: 'true',
+        defaultIsChecked={ props.task.isCompleted }
+        onChange={ () => {
+          props.task.isCompleted = !props.task.isCompleted
+          props.onCompleted(props.index)
+
+          taskCompletedToast.show({
+            maxW: '320px',
+            textAlign: 'center',
+            bg: 'success.700',
+            color: 'white',
+            description: `Task "${props.task.title}" marked as completed.`
+          })
         }}
-        onPress={ () => showModal(true) }
+      />
+      <Pressable
+        flex='1'
+        colorScheme='indigo'
+        onPress={ () => props.showModal(true) }
       >
-        { description }
-      </Button>
+        {({ isHovered, isPressed }) => {
+          return (
+            <Box
+              borderRadius='4'
+              py='2' px='4'
+              bg={ isPressed ? 'indigo.100' : isHovered ? 'indigo.50' : '' }
+            >
+              <Text isTruncated fontSize='16'>{ props.task.title }</Text>
+              <Text isTruncated color='muted.600'>{ props.task.description }</Text>
+            </Box>
+          )
+        }}
+      </Pressable>
       <IconButton
         icon={ <MinusIcon /> }
         size='sm'
         colorScheme='danger'
+        onPress={ () => {
+          props.onDelete(props.index)
+
+          taskDeletedToast.show({
+            maxW: '320px',
+            textAlign: 'center',
+            bg: 'danger.700',
+            color: 'white',
+            description: `Task "${props.task.title}" deleted.`
+          })
+        }}
       />
     </HStack>
   )
