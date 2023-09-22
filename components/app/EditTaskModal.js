@@ -3,11 +3,11 @@ import {
   HStack,
   Heading,
   IconButton,
+  Input,
   Modal,
   TextArea,
   VStack
 } from 'native-base'
-import MTextField from '../MTextField'
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { useState } from 'react';
 
@@ -21,7 +21,7 @@ const EditTaskModal = props => {
 
   return (
     <Modal
-      isOpen={ props.isOpen }
+      { ...props }
       size='xl'
       onClose={ () => resetModal()}
     >
@@ -36,7 +36,13 @@ const EditTaskModal = props => {
               space='2'
               alignItems='center'
             >
-              <MTextField isReadOnly={ !editTitle } />
+              <Input
+                flex='1'
+                fontSize='16'
+                isReadOnly={ !editTitle }
+                isDisabled={ !editTitle }
+                value={ props.taskTitle }
+              />
               <IconButton
                 icon={
                   <MaterialIcons
@@ -53,6 +59,7 @@ const EditTaskModal = props => {
             <TextArea
               fontSize='14'
               placeholder='Add a description...'
+              value={ props.taskDescription }
             />
             <HStack space='2' justifyContent='flex-end'>
               <Button
