@@ -6,22 +6,31 @@ import {
   Input,
   Modal,
   TextArea,
-  VStack
+  VStack,
 } from 'native-base'
 import { MaterialIcons } from '@expo/vector-icons'; 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const EditTaskModal = props => {
   const [editTitle, setEditTitle] = useState(false)
+  const [taskTitle, setTaskTitle] = useState('')
+  const [taskDescription, setTaskDescription] = useState('')
 
   const resetModal = () => {
     props.showModal(false)
     setEditTitle(false)
   }
 
+  useEffect(() => {
+    setTaskTitle(props.task.title ?? '')
+    setTaskDescription(props.task.description ?? '')
+  }, [props.task])
+
+  console.log('Re rendering.');
+
   return (
     <Modal
-      { ...props }
+      isOpen = { props.isOpen }
       size='xl'
       onClose={ () => resetModal()}
     >
@@ -41,7 +50,8 @@ const EditTaskModal = props => {
                 fontSize='16'
                 isReadOnly={ !editTitle }
                 isDisabled={ !editTitle }
-                value={ props.taskTitle }
+                onChangeText={ setTaskTitle }
+                value={ taskTitle }
               />
               <IconButton
                 icon={
@@ -59,20 +69,25 @@ const EditTaskModal = props => {
             <TextArea
               fontSize='14'
               placeholder='Add a description...'
-              value={ props.taskDescription }
+              onChangeText={ setTaskDescription }
+              value={ taskDescription }
             />
             <HStack space='2' justifyContent='flex-end'>
               <Button
                 size='lg'
                 variant='ghost'
                 colorScheme='indigo'
-                onPress={ () => resetModal() }
+                onPress={ resetModal }
               >
                 Cancel
               </Button>
               <Button
                 size='lg'
                 colorScheme='indigo'
+                onPress={ () => {
+                  props.updateTask(props.task.id, taskTitle, taskDescription)
+                  resetModal()
+                }}
               >
                 Save
               </Button>
