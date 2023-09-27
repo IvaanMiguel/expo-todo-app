@@ -5,14 +5,15 @@ import {
   IconButton,
   MinusIcon,
   Pressable,
-  Text,
-  useToast,
+  Text
 } from 'native-base'
 import { memo } from 'react'
 
 const TaskItem = props => {
-  const taskCompletedToast = useToast()
-  const taskDeletedToast = useToast()
+  const onPressPressable = () => {
+    props.showModal(true)
+    props.onTaskPress(props.task)
+  }
 
   return (
     <HStack
@@ -27,22 +28,14 @@ const TaskItem = props => {
         onChange={() => {
           if (props.task.isCompleted) return
 
-          props.onCompleted(props.index)
-          props.onDelete(props.index)
-
-          taskCompletedToast.show({
-            maxW: '320px',
-            textAlign: 'center',
-            bg: 'success.700',
-            color: 'white',
-            description: `Task "${props.task.title}" marked as completed.`
-          })
+          props.onCompleted(props.task.id)
+          props.onDelete(props.task.id)
         }}
       />
       <Pressable
         flex='1'
         colorScheme='indigo'
-        onPress={ () => props.showModal(true) }
+        onPress={ onPressPressable }
       >
         {({ isHovered, isPressed }) => {
           return (
@@ -53,7 +46,7 @@ const TaskItem = props => {
             >
               <Text isTruncated fontSize='16'>{ props.task.title }</Text>
               {
-                props.description ? (
+                props.task.description ? (
                   <Text isTruncated color='muted.600'>{ props.task.description }</Text>
                 ) : null
               }
@@ -65,17 +58,7 @@ const TaskItem = props => {
         icon={ <MinusIcon /> }
         size='sm'
         colorScheme='danger'
-        onPress={ () => {
-          props.onDelete(props.index)
-
-          taskDeletedToast.show({
-            maxW: '320px',
-            textAlign: 'center',
-            bg: 'danger.700',
-            color: 'white',
-            description: `Task "${props.task.title}" deleted.`
-          })
-        }}
+        onPress={ () => { props.onDelete(props.task.id) }}
       />
     </HStack>
   )
