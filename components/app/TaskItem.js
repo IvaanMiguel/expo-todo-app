@@ -8,6 +8,7 @@ import {
   Text,
   useToast,
 } from 'native-base'
+import { memo } from 'react'
 
 const TaskItem = props => {
   const taskCompletedToast = useToast()
@@ -21,10 +22,13 @@ const TaskItem = props => {
       <Checkbox
         size='md'
         colorScheme='success'
-        defaultIsChecked={ props.task.isCompleted }
-        onChange={ () => {
-          props.task.isCompleted = !props.task.isCompleted
+        isChecked={ false }
+
+        onChange={() => {
+          if (props.task.isCompleted) return
+
           props.onCompleted(props.index)
+          props.onDelete(props.index)
 
           taskCompletedToast.show({
             maxW: '320px',
@@ -45,10 +49,14 @@ const TaskItem = props => {
             <Box
               borderRadius='4'
               py='2' px='4'
-              bg={ isPressed ? 'indigo.100' : isHovered ? 'indigo.50' : '' }
+              bg={ isPressed ? 'indigo.100' : isHovered ? 'indigo.50' : null }
             >
               <Text isTruncated fontSize='16'>{ props.task.title }</Text>
-              <Text isTruncated color='muted.600'>{ props.task.description }</Text>
+              {
+                props.description ? (
+                  <Text isTruncated color='muted.600'>{ props.task.description }</Text>
+                ) : null
+              }
             </Box>
           )
         }}
@@ -73,4 +81,4 @@ const TaskItem = props => {
   )
 }
 
-export default TaskItem
+export default memo(TaskItem)
