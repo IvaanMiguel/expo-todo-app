@@ -5,12 +5,14 @@ import {
   Heading,
   IconButton,
   Input,
-  VStack
+  VStack,
 } from 'native-base'
 import TaskItem from './TaskItem'
 import { memo, useCallback, useState } from 'react'
 import EditTaskModal from './EditTaskModal'
 import { MaterialIcons } from '@expo/vector-icons'; 
+
+import uuid from 'react-native-uuid'
 
 const AddTaskInput = memo(props => {
   const [title, setTitle] = useState('')
@@ -59,15 +61,15 @@ const TasksList = memo(props => {
     if (e.item.isCompleted) return
 
     return createTaskItem({
-      index: e.index,
       task: e.item,
       showModal: props.setShowEditModal,
       onDelete: props.deleteTask,
-      onCompleted: props.completeTask
+      onCompleted: props.completeTask,
+      onTaskPress: props.setModalTask
     })
   }
 
-  const keyExtractor = (item, index) => `${index}`
+  const keyExtractor = item => `${item.id}`
 
   return (
     <FlatList
@@ -86,30 +88,43 @@ const TodoList = () => {
   const [tasks, setTasks] = useState([])
   const [completedTasks, setCompletedTasks] = useState([])
   const [showEditModal, setShowEditModal] = useState(false)
+  const [modalTask, setModalTask] = useState({})
+
+  const getTaskIndex = id => tasks.map(task => task.id).indexOf(id)
 
   const addTask = useCallback(title => {
     if (!title) return
 
     setTasks([...tasks, {
+      id: uuid.v4(),
       title: title,
       description: '',
       isCompleted: false
     }])
   }, [tasks])
 
-  const deleteTask = useCallback(index => {
+  const deleteTask = useCallback(id => {
     const _tasks = [...tasks]
-    _tasks.splice(index, 1)
+    _tasks.splice(getTaskIndex(id), 1)
     setTasks(_tasks)
   }, [tasks])
 
-  const completeTask = useCallback(index => {
-    tasks[index].isCompleted = true
+  const updateTask = (id, newTitle, newDescription) => {
+    const index = getTaskIndex(id)
 
+    tasks[index].title = newTitle
+    tasks[index].description = newDescription
+
+    // To force a re rendering.
+    setTasks([...tasks])
+  }
+
+  const completeTask = useCallback(id => {
+    const index = getTaskIndex(id)
+
+    tasks[index].isCompleted = true
     setCompletedTasks([...completedTasks, tasks[index]])
   }, [tasks, completedTasks])
-
-  console.log(completedTasks);
 
   return (
     <>
@@ -120,9 +135,15 @@ const TodoList = () => {
           setShowEditModal={ setShowEditModal }
           deleteTask={ deleteTask }
           completeTask={ completeTask }
+          setModalTask={ setModalTask }
         />
       </VStack>
-      <EditTaskModal isOpen={ showEditModal } showModal={ setShowEditModal } />
+      <EditTaskModal
+        isOpen={ showEditModal }
+        showModal={ setShowEditModal }
+        task={ modalTask }
+        updateTask={ updateTask }
+      />
     </>
   )
 }
